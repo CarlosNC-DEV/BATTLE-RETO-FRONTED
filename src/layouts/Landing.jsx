@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
 import Cartas from '../components/Cartas';
 import ModalUnirme from '../components/ModalUnirme';
+import Sala from './Sala';
 
 const Landing = () => {
 
@@ -19,6 +20,10 @@ const Landing = () => {
             navigate(`/sala/${codigo}`);
             location.reload();
         });
+
+        return () => {
+            socket.off('juego-creado');
+        };
     };
 
 
@@ -41,6 +46,7 @@ const Landing = () => {
             <div>
                 <ModalUnirme></ModalUnirme>
             </div>
+
         </>
     );
 }

@@ -1,0 +1,31 @@
+.jugadores-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+    background-color: #f0f0f0;
+    padding: 10px;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  .jugador {
+    padding: 10px;
+    text-align: center;
+    background-color: white;
+    border-radius: 5px;
+  }
+  
+  .jugador-actual {
+    background-color: yellow;
+  }
+  
+  .jugador-creador {
+    background-color: lightgreen;
+  }
+  
+  @media (min-width: 768px) {
+    .jugadores-grid {
+      grid-template-columns: repeat(3, minmax(120px, 1fr));
+    }
+  }
+  
