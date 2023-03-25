@@ -1,24 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect, useContext } from 'react';
+import { CartasContext } from '../context/mainContext';
 
 const Cartas = () => {
 
-    const URL = "http://localhost:3000/pokemon";
-
-    const [pokemons, setPokemons] = useState([]);
+    const { getCartas, cartas } = useContext(CartasContext);
 
     useEffect(() => {
-        getPokemons()
+        getCartas();
     }, []);
 
-    const getPokemons = async () => {
-        const respuesta = await axios.get(URL);
-        setPokemons(respuesta.data);
-    }
 
     return (
         <>
-            {pokemons.map((pokemons) => (
+            {cartas.map((pokemons) => (
                 <div key={pokemons._id} className="card" style={{ "width": "18rem" }}>
                     <div className="card-header">{pokemons.idGame}</div>
                     <img src={pokemons.img} className="card-img-top" alt={pokemons.img}></img>

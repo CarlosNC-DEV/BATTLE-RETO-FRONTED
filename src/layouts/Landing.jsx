@@ -3,14 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
 import Cartas from '../components/Cartas';
 import ModalUnirme from '../components/ModalUnirme';
-import Sala from './Sala';
+
+const socket = io('http://localhost:3000');
 
 const Landing = () => {
 
     const navigate = useNavigate();
 
     const handleCrearJuego = () => {
-        const socket = io('http://localhost:3000');
         // emitir evento para crear juego
         socket.emit('crear-juego');
 
