@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CartasContext } from '../context/mainContext';
 import io from 'socket.io-client';
 import './layouts.css';
@@ -7,6 +8,8 @@ import './layouts.css';
 const socket = io('http://localhost:3000');
 
 const Sala = () => {
+
+    const navigate = useNavigate()
 
     const { getCartas, cartas } = useContext(CartasContext);
 
@@ -71,6 +74,7 @@ const Sala = () => {
 
         socket.on('partida-iniciada', () => {
             console.log('La partida ha sido iniciada.');
+            navigate(`juego/${codigo}`);
         });
 
         // Limpiar eventos al desmontar componente
@@ -91,7 +95,6 @@ const Sala = () => {
             setTimeout(() => {
                 clearInterval(intervalo);
                 socket.emit('iniciar-partida');
-                repartirCartas();
             }, 5000);
         }
     }, [jugadores.length, partidaIniciada]);
@@ -100,7 +103,6 @@ const Sala = () => {
     const iniciarPartida = () => {
         if (suficientesJugadores && anfitrion) {
             socket.emit('iniciar-partida');
-            repartirCartas();
         }
     };
 
