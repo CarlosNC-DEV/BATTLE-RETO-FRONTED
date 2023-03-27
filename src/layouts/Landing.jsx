@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
-import Cartas from '../components/Cartas';
 import ModalUnirme from '../components/ModalUnirme';
 
 const socket = io('http://localhost:3000');
@@ -29,24 +28,20 @@ const Landing = () => {
 
     return (
         <>
-            <div className='m-3 d-flex gap-2'>
-                <div>
-                    <button className='btn btn-primary' onClick={handleCrearJuego}>Crear Juego</button>
+                <div className='m-3 d-flex gap-2'>
+                    <div>
+                        <button className='btn btn-primary' onClick={handleCrearJuego}>Crear Juego</button>
+                    </div>
+
+                    <div>
+                        <button className='btn btn-primary' data-bs-toggle="modal" data-bs-target="#exampleModal">Unirte a Sala</button>
+                    </div>
                 </div>
 
+
                 <div>
-                    <button className='btn btn-primary' data-bs-toggle="modal" data-bs-target="#exampleModal">Unirte a Sala</button>
+                    <ModalUnirme></ModalUnirme>
                 </div>
-            </div>
-
-            <div className='container'>
-                <Cartas></Cartas>
-            </div>
-            
-            <div>
-                <ModalUnirme></ModalUnirme>
-            </div>
-
         </>
     );
 }

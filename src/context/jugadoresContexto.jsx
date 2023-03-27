@@ -93,11 +93,11 @@ export const JugadoresContextoProvider = (props) => {
       
           for (let j = 0; j < cartasPorJugador; j++) {
             const carta = cartas[i * cartasPorJugador + j];
-            cartasJugador.push({ id: carta._id ,url: carta.img, codigoGame:carta.idGame });
+            cartasJugador.push({ _id: carta._id , img: carta.img, nombre:carta.nombre, exp: carta.exp, ataque: carta.ataque, ataqueEspecial: carta.ataqueEspecial, resistencia: carta.resistencia, fuerza: carta.fuerza, defensa: carta.defensa, idGame: carta.idGame });
           }
       
           // Agregar el jugador con sus cartas al arreglo
-          jugadoresConCartas.push({ [jugador]: cartasJugador });
+          jugadoresConCartas.push(cartasJugador);
         }
       
         // Enviar el arreglo de jugadores con sus cartas al cliente
