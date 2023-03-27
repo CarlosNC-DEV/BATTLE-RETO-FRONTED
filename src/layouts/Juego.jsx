@@ -3,13 +3,12 @@ import { jugadoresContexto } from '../context/jugadoresContexto';
 
 const Juego = () => {
 
-    const { x } = useContext(jugadoresContexto);
-
-    console.log(x);
+    const { jugadorActual } = useContext(jugadoresContexto);
     
     return (
         <div>
             <h1>Aqui se mirara el juego</h1>
+            <p>soy el Jugador:{jugadorActual}</p>
         </div>
     );
 }
