@@ -6,55 +6,99 @@ const Juego = () => {
 
     const { socket, jugadorActual } = useContext(jugadoresContexto);
 
-    const [cartaJugador, setCartaJugador] = useState([]);
+    const [cartasJugador, setCartasJugador] = useState([]);
+    const [cartaEnJuego, setCartaEnJuego] = useState(null);
+    const [indiceCartaActual, setIndiceCartaActual] = useState(0);
+
+    const [iniciaJuego, setIniciaJuego] = useState(false);
 
     useEffect(() => {
         socket.on("recibir-cartas", (jugadoresConCartas) => {
             const cartaJugadorActual = jugadoresConCartas[jugadorActual];
-            console.log(cartaJugadorActual);
-            setCartaJugador(cartaJugadorActual);
+            setCartasJugador(cartaJugadorActual);
+            mostrarPrimeraCarta(cartaJugadorActual);
         });
     }, [jugadorActual]);
 
-    let jugadorMuestreo = jugadorActual+1;
+    useEffect(() => {
+        if (cartasJugador.some(carta => carta.idGame === "1A")) {
+            setIniciaJuego(true);
+        }
+    }, [cartasJugador]);
+
+    const mostrarPrimeraCarta = (cartas) => {
+        const cartaActual = cartas[indiceCartaActual];
+        setCartaEnJuego(cartaActual);
+    };
+
+    const mostrarSiguienteCarta = () => {
+        const siguienteIndice = indiceCartaActual + 1;
+        if (siguienteIndice < cartasJugador.length) {
+            const cartaActual = cartasJugador[siguienteIndice];
+            setCartaEnJuego(cartaActual);
+            setIndiceCartaActual(siguienteIndice);
+        } else {
+            setIndiceCartaActual(0);
+            const cartaActual = cartasJugador[0];
+            setCartaEnJuego(cartaActual);
+        }
+    };
+
+
 
     return (
         <div>
-            <div className='d-lfex text-end'>
-                <p className='jugador-juego'>Eres el Jugador {jugadorMuestreo}</p>
+            <div className='text-end'>
+                <p className='jugador-juego'>Mucha Suerte</p>
             </div>
+            {!iniciaJuego ? (
+                <div>
+                    <p className='jugador-juego bg-warning'>Esperando a que el jugador con la carta "1A" elija el poder a jugar...</p>
+                </div>
+            ) : (
+                <div>
+                    <p className='jugador-juego bg-success'>Tu inicias el juego...</p>
+                </div>
+            )}
+
+            <p className='ms-3 fs-4'>Tu carta a jugar en esta ronda es:</p>
             <div className='d-flex'>
-                <div className='container' style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gridGap: "1rem" }}>
-                    {cartaJugador.map((pokemons) => (
-                        <div key={pokemons._id} className="card" style={{ "width": "100%", "maxWidth": "250px" }}>
-                            <div className="card-header">{pokemons.idGame}</div>
-                            <img src={pokemons.img} className="card-img-top card-img-top-small" alt={pokemons.img}></img>
+                <div className='d-flex justify-content-center w-25'>
+                    {cartaEnJuego && (
+                        <div key={cartaEnJuego._id} className="card" style={{ "width": "100%", "maxWidth": "250px" }}>
+                            <div className="card-header">{cartaEnJuego.idGame}</div>
+                            <img src={cartaEnJuego.img} className="card-img-top card-img-top-small" alt={cartaEnJuego.img}></img>
                             <div className="card-body text-center">
-                                <h5 className="card-title">{pokemons.nombre}</h5>
-                                <p className="card-text">{pokemons.exp} exp</p>
+                                <h5 className="card-title">{cartaEnJuego.nombre}</h5>
+                                <p className="card-text">{cartaEnJuego.exp} exp</p>
                             </div>
                             <div className="card-footer d-flex justify-content-evenly">
                                 <div className='text-center mx-2'>
-                                    <p className='p-0 m-0'>{pokemons.ataque}K</p>
+                                    <p className='p-0 m-0'>{cartaEnJuego.ataque}K</p>
                                     <p className='p-0 m-0'>Ataque</p>
                                 </div>
                                 <div className='text-center mx-2'>
-                                    <p className='p-0 m-0'>{pokemons.ataqueEspecial}K</p>
+                                    <p className='p-0 m-0'>{cartaEnJuego.ataqueEspecial}K</p>
                                     <p className='p-0 m-0'>Ataque Especial</p>
                                 </div>
                                 <div className='text-center mx-2'>
-                                    <p className='p-0 m-0'>{pokemons.defensa}K</p>
+                                    <p className='p-0 m-0'>{cartaEnJuego.defensa}K</p>
                                     <p className='p-0 m-0'>Defensa</p>
                                 </div>
                             </div>
                         </div>
-                    ))}
+                    )}
                 </div>
-                <div className="container mesa-de-juego">
+
+                <div className="container mesa-de-juego w-75">
                     <div>
                         Mesa de juego
                     </div>
                 </div>
+            </div>
+
+            <div className='container m-5'>
+                <button className='btn btn-primary' onClick={() => mostrarSiguienteCarta()}>Siguiente ronda</button>
             </div>
         </div>
     );
