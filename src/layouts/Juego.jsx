@@ -14,16 +14,20 @@ const Juego = () => {
 
     useEffect(() => {
         socket.on("recibir-cartas", (jugadoresConCartas) => {
+            console.log(jugadoresConCartas);
             const cartaJugadorActual = jugadoresConCartas[jugadorActual];
             setCartasJugador(cartaJugadorActual);
             mostrarPrimeraCarta(cartaJugadorActual);
         });
-    }, [jugadorActual]);
+
+    }, [socket, jugadorActual]);
 
     useEffect(() => {
         if (cartasJugador.some(carta => carta.idGame === "1A")) {
             setIniciaJuego(true);
         }
+        socket.emit("carta-en-juego", { jugador: jugadorActual, cartaEnJuego: cartaEnJuego });
+
     }, [cartasJugador]);
 
     const mostrarPrimeraCarta = (cartas) => {
@@ -43,6 +47,14 @@ const Juego = () => {
             setCartaEnJuego(cartaActual);
         }
     };
+
+    const compararCartas = () => {
+        console.log("Holiss")
+        socket.on("resultado-ronda", (ganador) => {
+            console.log(ganador);
+        });
+    }
+
 
 
 
@@ -99,6 +111,10 @@ const Juego = () => {
 
             <div className='container m-5'>
                 <button className='btn btn-primary' onClick={() => mostrarSiguienteCarta()}>Siguiente ronda</button>
+            </div>
+
+            <div className='container m-5'>
+                <button className='btn btn-success' onClick={() => compararCartas()}>Comparar cartas</button>
             </div>
         </div>
     );
