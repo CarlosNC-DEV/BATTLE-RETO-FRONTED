@@ -39,20 +39,6 @@
   height: auto;
 }
 
-.mesa-de-juego {
-  background-color: rgb(63, 169, 63);
-  border: 5px solid #333;
-  border-radius: 10px;
-  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.5);
-  color: white;
-  font-family: 'Helvetica Neue', sans-serif;
-  font-size: 2rem;
-  font-weight: bold;
-  padding: 20px;
-  text-align: center;
-  text-shadow: 2px 2px #333;
-}
-
 .jugador-juego{
   margin: 10px;
   font-size: 1.2rem;

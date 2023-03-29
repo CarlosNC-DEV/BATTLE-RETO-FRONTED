@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { jugadoresContexto } from '../context/jugadoresContexto';
+import MesaJuego from '../components/MesaJuego';
 import './layouts.css';
 
 const Juego = () => {
@@ -26,8 +27,6 @@ const Juego = () => {
         if (cartasJugador.some(carta => carta.idGame === "1A")) {
             setIniciaJuego(true);
         }
-        socket.emit("carta-en-juego", { jugador: jugadorActual, cartaEnJuego: cartaEnJuego });
-
     }, [cartasJugador]);
 
     const mostrarPrimeraCarta = (cartas) => {
@@ -48,15 +47,13 @@ const Juego = () => {
         }
     };
 
-    const compararCartas = () => {
-        console.log("Holiss")
-        socket.on("resultado-ronda", (ganador) => {
-            console.log(ganador);
-        });
+    const subirCartaMesa = ()=>{
+        enviarCartaEnJuego();
     }
 
-
-
+    const enviarCartaEnJuego = () => {
+        socket.emit("cartas-en-juego", { cartaEnJuego: cartaEnJuego, jugador: jugadorActual });
+    };
 
     return (
         <div>
@@ -101,20 +98,13 @@ const Juego = () => {
                         </div>
                     )}
                 </div>
+                    
+                    <MesaJuego></MesaJuego>
 
-                <div className="container mesa-de-juego w-75">
-                    <div>
-                        Mesa de juego
-                    </div>
-                </div>
             </div>
 
             <div className='container m-5'>
-                <button className='btn btn-primary' onClick={() => mostrarSiguienteCarta()}>Siguiente ronda</button>
-            </div>
-
-            <div className='container m-5'>
-                <button className='btn btn-success' onClick={() => compararCartas()}>Comparar cartas</button>
+                <button className='btn btn-primary' onClick={() => subirCartaMesa()}>Subir Carta a Mesa</button>
             </div>
         </div>
     );
