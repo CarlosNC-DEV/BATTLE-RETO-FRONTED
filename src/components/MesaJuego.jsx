@@ -10,6 +10,8 @@ const MesaJuego = () => {
 
     useEffect(() => {
         socket.on("cartas-en-mesa", ({ cartasEnJuego, jugadoresEnJuego }) => {
+            console.log(cartasEnJuego);
+            console.log(jugadoresEnJuego);
             setCartasMesa(cartasEnJuego);
         });
         return () => {
@@ -18,7 +20,7 @@ const MesaJuego = () => {
     }, [socket]);
 
     if(jugadores.length === cartasMesa.length){
-        console.log("Holiss")
+        console.log("Comprarando cartas y aqui se dara el ganador");
     }
 
     return (

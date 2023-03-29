@@ -5,15 +5,14 @@ import './layouts.css';
 
 const Juego = () => {
 
-    const { socket, jugadorActual } = useContext(jugadoresContexto);
+    const { socket, jugadorActual, saberQuieninicia, iniciaJuego } = useContext(jugadoresContexto);
 
     const [cartasJugador, setCartasJugador] = useState([]);
     const [cartaEnJuego, setCartaEnJuego] = useState(null);
     const [poderjugar, setPoderJugar] = useState('');
-    const [restosTurno, setRestoTurno] = useState(false);
     const [indiceCartaActual, setIndiceCartaActual] = useState(0);
 
-    const [iniciaJuego, setIniciaJuego] = useState(false);
+    const [restoJu, setRestoJu] = useState(false);
 
     useEffect(() => {
         socket.on("recibir-cartas", (jugadoresConCartas) => {
@@ -23,11 +22,15 @@ const Juego = () => {
             mostrarPrimeraCarta(cartaJugadorActual);
         });
 
+        socket.on("habilitados-resto", (data) => {
+            setRestoJu(data);
+        });
+
     }, [socket, jugadorActual]);
 
     useEffect(() => {
         if (cartasJugador.some(carta => carta.idGame === "1A")) {
-            setIniciaJuego(true);
+            saberQuieninicia();
         }
     }, [cartasJugador]);
 
@@ -50,15 +53,11 @@ const Juego = () => {
     };
 
     const subirCartaMesa = () => {
-        enviarCartaEnJuego();
+        socket.emit("cartas-en-juego", { cartaEnJuego: cartaEnJuego, jugador: jugadorActual });
+        socket.emit("habilitar-resto", { data: true })
     }
 
-    const enviarCartaEnJuego = () => {
-        socket.emit("cartas-en-juego", { cartaEnJuego: cartaEnJuego, jugador: jugadorActual });
-    };
-
-
-    console.log(restosTurno);
+    console.log(restoJu);
 
 
     return (
@@ -68,9 +67,12 @@ const Juego = () => {
             </div>
             {!iniciaJuego ? (
                 <div>
-                    <p className='jugador-juego bg-warning'>Espera tu turno...</p>
+                    {!restoJu && !iniciaJuego ? (
+                        <p className='jugador-juego bg-warning'>Espera tu turno...</p>
+                    ) : (
+                        <p className='jugador-juego bg-primary'>Tu eres el siguiente...</p>
+                    )}
                 </div>
-
             ) : (
                 <div>
                     <p className='jugador-juego bg-success'>Tu inicias el juego, elije el poder con el que jugaras tu carta y subela a al mesa...</p>
@@ -108,12 +110,18 @@ const Juego = () => {
                 </div>
 
                 <MesaJuego></MesaJuego>
-
             </div>
 
             {!iniciaJuego ? (
                 <div className='container m-3'>
-                    <button className='btn btn-warning'>Espera tu turno</button>
+
+                    {!restoJu && !iniciaJuego ? (
+                        <p className='text-danger fs-4 fw-bold'>Espera tu turno....</p>
+                    ) : (
+                        <button className='btn btn-primary' onClick={() => subirCartaMesa()}>Subir Carta a Mesa</button>
+                    )}
+
+
                 </div>
             ) : (
                 <div className='container d-flex gap-2 m-3'>
@@ -127,7 +135,7 @@ const Juego = () => {
                         </select>
                     </div>
                     {poderjugar === '' && iniciaJuego ? (
-                        <p className='btn btn-warning'>Seleccione un poder para poder subir su carta a la mesa...</p>
+                        <p className='text-warning fs-4'>Seleccione un poder para poder subir su carta a la mesa...</p>
                     ) : (
                         <div>
                             <button className='btn btn-primary' onClick={() => subirCartaMesa()}>Subir Carta a Mesa</button>

@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useEffect, useState, useContext } from 'react';
 import { CartasContext } from '../context/mainContext';
 import io from 'socket.io-client';
 
@@ -22,6 +22,9 @@ export const JugadoresContextoProvider = (props) => {
 
     const [partidaIniciada, setPartidaIniciada] = useState(false);
     const [contador, setContador] = useState(5);
+
+    // Estado de Juego
+    const [iniciaJuego, setIniciaJuego] = useState(false);
 
     const unirseJuegoContext = () => {
         socket.emit('unirse-a-juego', codigo);
@@ -59,7 +62,7 @@ export const JugadoresContextoProvider = (props) => {
     }
 
 
-    const iniciarPartidaAutoContext = ()=>{
+    const iniciarPartidaAutoContext = () => {
         if (jugadores.length === 7 && !partidaIniciada) {
             setPartidaIniciada(true);
             let intervalo = setInterval(() => {
@@ -85,30 +88,33 @@ export const JugadoresContextoProvider = (props) => {
         const numCartas = cartas.length;
         const cartasPorJugador = Math.floor(numCartas / numJugadores);
         const jugadoresConCartas = [];
-      
+
         // Repartir las cartas de forma equitativa entre los jugadores
         for (let i = 0; i < numJugadores; i++) {
-          const jugador = `jugador${i + 1}`;
-          const cartasJugador = [];
-      
-          for (let j = 0; j < cartasPorJugador; j++) {
-            const carta = cartas[i * cartasPorJugador + j];
-            cartasJugador.push({ _id: carta._id , img: carta.img, nombre:carta.nombre, exp: carta.exp, ataque: carta.ataque, ataqueEspecial: carta.ataqueEspecial, resistencia: carta.resistencia, fuerza: carta.fuerza, defensa: carta.defensa, idGame: carta.idGame });
-          }
-      
-          // Agregar el jugador con sus cartas al arreglo
-          jugadoresConCartas.push(cartasJugador);
+            const jugador = `jugador${i + 1}`;
+            const cartasJugador = [];
+
+            for (let j = 0; j < cartasPorJugador; j++) {
+                const carta = cartas[i * cartasPorJugador + j];
+                cartasJugador.push({ _id: carta._id, img: carta.img, nombre: carta.nombre, exp: carta.exp, ataque: carta.ataque, ataqueEspecial: carta.ataqueEspecial, resistencia: carta.resistencia, fuerza: carta.fuerza, defensa: carta.defensa, idGame: carta.idGame });
+            }
+
+            // Agregar el jugador con sus cartas al arreglo
+            jugadoresConCartas.push(cartasJugador);
         }
-      
+
         // Enviar el arreglo de jugadores con sus cartas al cliente
         socket.emit('repartir-cartas', jugadoresConCartas);
-      };
+    };
 
     //=======================================================
 
+    const saberQuieninicia = async () => {
+        setIniciaJuego(true);
+    }
 
     return (
-        <jugadoresContexto.Provider value={{ socket, getCartas, unirseJuegoContext, jugadorActualContext, jugadoresActualizadosContex, iniciarPartidaAutoContext, iniciarPartida, codigo, jugadorActual, jugadorCreador, anfitrion, jugadores, partidaIniciada, suficientesJugadores, contador }}>
+        <jugadoresContexto.Provider value={{ socket, getCartas, unirseJuegoContext, jugadorActualContext, jugadoresActualizadosContex, iniciarPartidaAutoContext, iniciarPartida, codigo, jugadorActual, jugadorCreador, anfitrion, jugadores, partidaIniciada, suficientesJugadores, contador, saberQuieninicia, iniciaJuego }}>
             {props.children}
         </jugadoresContexto.Provider>
     );
