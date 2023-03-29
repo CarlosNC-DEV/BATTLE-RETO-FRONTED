@@ -7,20 +7,30 @@ const MesaJuego = () => {
     const { socket, jugadores } = useContext(jugadoresContexto);
 
     const [cartasMesa, setCartasMesa] = useState([]);
+    const [jugadorJuego, setJugadorJuego] = useState([]);
 
     useEffect(() => {
         socket.on("cartas-en-mesa", ({ cartasEnJuego, jugadoresEnJuego }) => {
-            console.log(cartasEnJuego);
-            console.log(jugadoresEnJuego);
             setCartasMesa(cartasEnJuego);
+            setJugadorJuego(jugadoresEnJuego)
         });
         return () => {
             socket.off('cartas-en-mesa');
         };
     }, [socket]);
 
-    if(jugadores.length === cartasMesa.length){
-        console.log("Comprarando cartas y aqui se dara el ganador");
+    if (jugadores.length === cartasMesa.length) {
+        // Encuentra la carta con el valor "exp" más alto
+        const cartaGanadora = cartasMesa.reduce((prev, curr) => {
+            return prev.exp > curr.exp ? prev : curr;
+        });
+
+        const indiceCartaGanadora = cartasMesa.indexOf(cartaGanadora);
+
+        const jugadorGanador = jugadorJuego[indiceCartaGanadora];
+
+        socket.emit("ganador-ronda", { ganador: jugadorGanador, cartaGanadora: cartaGanadora.nombre})
+
     }
 
     return (

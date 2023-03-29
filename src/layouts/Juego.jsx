@@ -14,6 +14,9 @@ const Juego = () => {
 
     const [restoJu, setRestoJu] = useState(false);
 
+    const [ganador, setGanador] = useState('');
+    const [ganadorcarta, setCartaGanador] = useState('');
+
     useEffect(() => {
         socket.on("recibir-cartas", (jugadoresConCartas) => {
             console.log(jugadoresConCartas);
@@ -24,6 +27,11 @@ const Juego = () => {
 
         socket.on("habilitados-resto", (data) => {
             setRestoJu(data);
+        });
+
+        socket.on("ganador-ronda-carta", ({ganador, cartaGanadora}) => {
+            setGanador(ganador)
+            setCartaGanador(cartaGanadora)
         });
 
     }, [socket, jugadorActual]);
@@ -57,8 +65,6 @@ const Juego = () => {
         socket.emit("habilitar-resto", { data: true })
     }
 
-    console.log(restoJu);
-
 
     return (
         <div>
@@ -78,8 +84,7 @@ const Juego = () => {
                     <p className='jugador-juego bg-success'>Tu inicias el juego, elije el poder con el que jugaras tu carta y subela a al mesa...</p>
                 </div>
             )}
-
-
+            <p>El ganador de la ronda es: {ganador} con la carta {ganadorcarta}</p>
             <p className='ms-3 fs-4'>Tu carta a jugar en esta ronda es:</p>
             <div className='d-flex'>
                 <div className='d-flex justify-content-center w-25'>
