@@ -8,28 +8,38 @@ const MesaJuego = () => {
 
     const [cartasMesa, setCartasMesa] = useState([]);
     const [jugadorJuego, setJugadorJuego] = useState([]);
+    const [poderJu, setPoderJu] = useState('');
 
     useEffect(() => {
         socket.on("cartas-en-mesa", ({ cartasEnJuego, jugadoresEnJuego }) => {
             setCartasMesa(cartasEnJuego);
             setJugadorJuego(jugadoresEnJuego)
         });
+        socket.on("poder-carta", (poder) => {
+            setPoderJu(poder);
+        })
         return () => {
             socket.off('cartas-en-mesa');
         };
     }, [socket]);
 
     if (jugadores.length === cartasMesa.length) {
-        // Encuentra la carta con el valor "exp" más alto
-        const cartaGanadora = cartasMesa.reduce((prev, curr) => {
-            return prev.exp > curr.exp ? prev : curr;
-        });
+
+        let cartaGanadora = cartasMesa[0];
+
+        for (let i = 1; i < cartasMesa.length; i++) {
+          if (cartasMesa[i][poderJu] > cartaGanadora[poderJu]) {
+            cartaGanadora = cartasMesa[i];
+          }
+        }
 
         const indiceCartaGanadora = cartasMesa.indexOf(cartaGanadora);
-
         const jugadorGanador = jugadorJuego[indiceCartaGanadora];
 
-        socket.emit("ganador-ronda", { ganador: jugadorGanador, cartaGanadora: cartaGanadora.nombre})
+        console.log(jugadorGanador);
+        console.log(cartaGanadora);
+
+        socket.emit("ganador-ronda", { ganador: jugadorGanador, cartaGanadora: cartaGanadora.nombre })
 
     }
 

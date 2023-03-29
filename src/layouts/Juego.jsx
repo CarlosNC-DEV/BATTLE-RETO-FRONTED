@@ -65,11 +65,17 @@ const Juego = () => {
         socket.emit("habilitar-resto", { data: true })
     }
 
+    const handleSelect = (e)=>{
+        const poder = e.target.value;
+        setPoderJugar(poder)
+        socket.emit("poder-jugar", e.target.value);
+    }
+
 
     return (
         <div>
             <div className='text-end'>
-                <p className='jugador-juego'>Mucha Suerte</p>
+                <p className='jugador-juego'>jugador {jugadorActual+1}</p>
             </div>
             {!iniciaJuego ? (
                 <div>
@@ -84,7 +90,7 @@ const Juego = () => {
                     <p className='jugador-juego bg-success'>Tu inicias el juego, elije el poder con el que jugaras tu carta y subela a al mesa...</p>
                 </div>
             )}
-            <p>El ganador de la ronda es: {ganador} con la carta {ganadorcarta}</p>
+            <p>El ganador de la ronda es el jugador {ganador+1} con la carta {ganadorcarta}</p>
             <p className='ms-3 fs-4'>Tu carta a jugar en esta ronda es:</p>
             <div className='d-flex'>
                 <div className='d-flex justify-content-center w-25'>
@@ -131,11 +137,11 @@ const Juego = () => {
             ) : (
                 <div className='container d-flex gap-2 m-3'>
                     <div>
-                        <select defaultValue="" className="form-select" aria-label="Default select example" onChange={(e) => setPoderJugar(e.target.value)}>
+                        <select defaultValue="" className="form-select" aria-label="Default select example" onChange={(e) => handleSelect(e)}>
                             <option value="">Selecciona el poder</option>
                             <option value="exp">Exp</option>
                             <option value="ataque">Ataque</option>
-                            <option value="ataque-especial">Ataque especial</option>
+                            <option value="ataqueEspecial">Ataque especial</option>
                             <option value="defensa">Defensa</option>
                         </select>
                     </div>
