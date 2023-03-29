@@ -9,6 +9,8 @@ const Juego = () => {
 
     const [cartasJugador, setCartasJugador] = useState([]);
     const [cartaEnJuego, setCartaEnJuego] = useState(null);
+    const [poderjugar, setPoderJugar] = useState('');
+    const [restosTurno, setRestoTurno] = useState(false);
     const [indiceCartaActual, setIndiceCartaActual] = useState(0);
 
     const [iniciaJuego, setIniciaJuego] = useState(false);
@@ -47,13 +49,17 @@ const Juego = () => {
         }
     };
 
-    const subirCartaMesa = ()=>{
+    const subirCartaMesa = () => {
         enviarCartaEnJuego();
     }
 
     const enviarCartaEnJuego = () => {
         socket.emit("cartas-en-juego", { cartaEnJuego: cartaEnJuego, jugador: jugadorActual });
     };
+
+
+    console.log(restosTurno);
+
 
     return (
         <div>
@@ -62,13 +68,15 @@ const Juego = () => {
             </div>
             {!iniciaJuego ? (
                 <div>
-                    <p className='jugador-juego bg-warning'>Esperando a que el jugador con la carta "1A" elija el poder a jugar...</p>
+                    <p className='jugador-juego bg-warning'>Espera tu turno...</p>
                 </div>
+
             ) : (
                 <div>
-                    <p className='jugador-juego bg-success'>Tu inicias el juego...</p>
+                    <p className='jugador-juego bg-success'>Tu inicias el juego, elije el poder con el que jugaras tu carta y subela a al mesa...</p>
                 </div>
             )}
+
 
             <p className='ms-3 fs-4'>Tu carta a jugar en esta ronda es:</p>
             <div className='d-flex'>
@@ -98,14 +106,35 @@ const Juego = () => {
                         </div>
                     )}
                 </div>
-                    
-                    <MesaJuego></MesaJuego>
+
+                <MesaJuego></MesaJuego>
 
             </div>
 
-            <div className='container m-5'>
-                <button className='btn btn-primary' onClick={() => subirCartaMesa()}>Subir Carta a Mesa</button>
-            </div>
+            {!iniciaJuego ? (
+                <div className='container m-3'>
+                    <button className='btn btn-warning'>Espera tu turno</button>
+                </div>
+            ) : (
+                <div className='container d-flex gap-2 m-3'>
+                    <div>
+                        <select defaultValue="" className="form-select" aria-label="Default select example" onChange={(e) => setPoderJugar(e.target.value)}>
+                            <option value="">Selecciona el poder</option>
+                            <option value="exp">Exp</option>
+                            <option value="ataque">Ataque</option>
+                            <option value="ataque-especial">Ataque especial</option>
+                            <option value="defensa">Defensa</option>
+                        </select>
+                    </div>
+                    {poderjugar === '' && iniciaJuego ? (
+                        <p className='btn btn-warning'>Seleccione un poder para poder subir su carta a la mesa...</p>
+                    ) : (
+                        <div>
+                            <button className='btn btn-primary' onClick={() => subirCartaMesa()}>Subir Carta a Mesa</button>
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 }
